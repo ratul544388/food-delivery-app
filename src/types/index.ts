@@ -1,19 +1,34 @@
-import { CartItem, Food, Order, OrderItem, Size, User } from "@prisma/client";
+import { CartItem, Food, Order, OrderItem, Review, User } from "@prisma/client";
 
-export type FullFoodTypes = Food & {
-  sizes: Size[];
+export type FoodType = "POPULAR" | "TOP_RATED" | "SIMILAR";
+
+export type FoodWithReview = Food & {
+  reviews: (Review & {
+    user: User;
+  })[];
 };
 
 export type FullCartTypes = CartItem & {
   food: Food;
 };
 
+export type OrderItemsTypes = OrderItem & {
+  food: Food;
+};
+
 export type FullOrderType = Order & {
-  orderItems: (OrderItem & {
-    food: Food;
-  })[];
+  orderItems: OrderItemsTypes[];
+  user: User;
 };
 
 export type UserWithCart = User & {
   cartItems: FullCartTypes[];
+};
+
+export type UserWithOrders = User & {
+  orders: (Order & {
+    orderItems: (OrderItem & {
+      food: Food;
+    })[];
+  })[];
 };

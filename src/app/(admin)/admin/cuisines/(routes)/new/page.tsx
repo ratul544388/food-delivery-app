@@ -10,7 +10,7 @@ const Page = () => {
         label="Create cuisine"
         icon={Utensils}
         actionLabel="Cancel"
-        actionUrl="/cuisines"
+        actionUrl="/admin/cuisines"
         actionVariant="outline"
       />
       <Separator />

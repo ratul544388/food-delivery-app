@@ -1,31 +1,56 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UtensilsCrossed } from "lucide-react";
+import { BadgePlus, UtensilsCrossed } from "lucide-react";
 import Link from "next/link";
 import { FoodDataTable } from "../_components/data-table/food-data-table";
 import { foodColumns } from "../_components/data-table/food-columns";
 import { db } from "@/lib/db";
+import Pagination from "@/components/pagination";
+import { MAX_DATA_TABLE_PAGE_SIZE } from "@/constants";
+import PageHeader from "@/components/page-header";
+import { DataTable } from "@/components/data-tables/data-table";
 
-const Page = async () => {
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const page = Number(searchParams.page) || 1;
+
+  const BATCH = MAX_DATA_TABLE_PAGE_SIZE;
+  const total = await db.food.count();
+  const skip = BATCH * (page - 1);
+  const hasMore = total - skip >= BATCH;
+  const take = hasMore ? BATCH : total - skip;
+  const pageCount = Math.ceil(total / BATCH);
+
   const foods = await db.food.findMany({
     include: {
-      sizes: true,
+      orderItems: {
+        include: {
+          food: true,
+        },
+      },
+    },
+    skip,
+    take,
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center gap-3">
-        <div className="text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2">
-          <UtensilsCrossed className="sm:h-6 sm:w-6 h-5 w-5" />
-          Cuisines
-        </div>
-        <Link href="/cuisines/new" className={buttonVariants()}>
-          Add a new cuisine
-        </Link>
-      </div>
+      <PageHeader
+        label="Cuisines"
+        icon={UtensilsCrossed}
+        actionLabel="Add new"
+        actionIcon={BadgePlus}
+        actionUrl="/admin/cuisines/new"
+      />
       <Separator />
-      <FoodDataTable columns={foodColumns} data={foods} />
+      <DataTable columns={foodColumns} data={foods} />
+      <Pagination pageCount={pageCount} />
     </div>
   );
 };

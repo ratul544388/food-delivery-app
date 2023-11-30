@@ -1,12 +1,10 @@
+import { useMutation } from "@/hooks/use-mutation";
 import { FullCartTypes } from "@/types";
 import { Equal, Trash, X } from "lucide-react";
 import { useState } from "react";
-import Counter, { CountAndTotalTypes } from "./counter";
-import Photo from "./photo";
+import Counter from "./counter";
 import Icon from "./icon";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import Photo from "./photo";
 
 interface CartItemProps {
   cartItem: FullCartTypes;
@@ -19,34 +17,22 @@ const CartItem: React.FC<CartItemProps> = ({
   total,
   onTotalChange,
 }) => {
-  const router = useRouter();
   const [count, setCount] = useState(cartItem.count);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRemoveCart = async () => {
-    setIsLoading(true);
-    try {
-      await axios.delete(`/api/food/${cartItem.foodId}/cart/${cartItem.id}`);
-      router.refresh();
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { mutate, isPending } = useMutation({
+    api: `/api/cart-items/${cartItem.id}`,
+    method: "delete",
+    refresh: true,
+    success: "Item removed",
+  });
 
   return (
-    <div className="flex py-2 px-4 hover:bg-primary/5 select-none items-center gap-3 text-sm">
-      <Photo photo={cartItem.food.photo} className="max-w-[90px]" />
-      <div className="flex flex-col">
-        <div className="flex items-center gap-3">
+    <div className="flex py-2 px-4 hover:bg-primary/5 select-none gap-3 text-sm">
+      <Photo photo={cartItem.food.photo} size="SM" />
+      <div className="flex flex-col w-full">
+        <div className="flex justify-between gap-3">
           <h1 className="font-semibold">{cartItem.food.name}</h1>
-          <Icon
-            icon={Trash}
-            iconSize={12}
-            onClick={handleRemoveCart}
-            disabled={isLoading}
-          />
+          <Trash className="h-4 w-4 hover:text-primary"/>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           ${cartItem.food.price}

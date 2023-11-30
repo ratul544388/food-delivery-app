@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface LoadingButtonProps {
   label: string;
-  loadingLabel: string;
+  loadingLabel?: string;
   isLoading: boolean;
   variant?: "default" | "outline" | "secondary" | "ghost";
   className?: string;
@@ -34,10 +34,10 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
               variant !== "default" && "text-primary"
             )}
           />
-          {loadingLabel}
+          {loadingLabel || label}
         </div>
       ) : (
-        `${label}`
+        label
       )}
     </Button>
   );

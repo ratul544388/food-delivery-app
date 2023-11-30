@@ -1,74 +1,77 @@
 "use client";
 
-import Icon from "@/components/icon";
-import { Button, buttonVariants } from "@/components/ui/button";
+import Photo from "@/components/photo";
+import Star from "@/components/star";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useMutation } from "@/hooks/use-mutation";
+import { cn } from "@/lib/utils";
 import { UserWithCart } from "@/types";
-import { Food, User } from "@prisma/client";
-import axios from "axios";
+import { Food } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { BsCart, BsCartFill, BsFillCartCheckFill } from "react-icons/bs";
+import { BsCart, BsFillCartCheckFill } from "react-icons/bs";
 import { FaStar } from "react-icons/fa6";
 
 interface FoodCardProps {
   food: Food;
   currentUser: UserWithCart | null;
+  queryKey: string;
+  className?: string;
 }
 
-const FoodCard: React.FC<FoodCardProps> = ({ food, currentUser }) => {
+export const FoodCard = ({
+  food,
+  currentUser,
+  queryKey,
+  className,
+}: FoodCardProps) => {
   const router = useRouter();
-
   const isAddedToCart = currentUser?.cartItems.some(
     (item) => item.foodId === food.id
   );
 
-  const handleAddedToCart = async () => {
-    if (currentUser) {
-      try {
-        if (isAddedToCart) {
-          const userCart = currentUser.cartItems.find(
-            (item) => item.foodId === food.id
-          );
-          await axios.delete(`/api/food/${food.id}/cart/${userCart?.id}`);
-          toast.success("Item has been removed from cart");
-        } else {
-          await axios.post(`/api/food/${food.id}/cart`, {
-            count: 1,
-          });
-          toast.success("Item was added to cart");
-        }
-      } catch (error) {
-        toast.error("Something went wrong");
-      }
-    } else {
-    }
-  };
+  const cartItem = currentUser?.cartItems.find(
+    (item) => item.foodId === food.id
+  );
+
+  const { mutate, isPending } = useMutation({
+    method: isAddedToCart ? "delete" : "post",
+    api: isAddedToCart ? `/api/cart-items/${cartItem?.id}` : `/api/cart-items/`,
+    data: { foodId: food.id, count: 1 },
+    queryKey,
+    refresh: true,
+    success: isAddedToCart
+      ? "Item removed from cart"
+      : "Item was added to cart",
+  });
 
   return (
-    <div className="bg-background shadow-md rounded-xl overflow-hidden flex flex-col gap-2 pb-2">
-      <div className="w-full aspect-[6/5] relative">
-        <Image src={food.photo} alt="image" fill className="object-cover" />
-      </div>
-      <div className="flex flex-col gap-2 px-3">
-        <div className="flex justify-between w-full items-center gap-1">
-          <h1 className="font-semibold capitalize line-clamp-1">{food.name}</h1>
-          <div className="flex items-center gap-1 text-primary">
-            <FaStar className="h-4 w-4" />
-            5.0
-          </div>
-        </div>
-        <h1 className="font-bold text-primary">${food.price}</h1>
+    <div
+      onClick={() => router.push(`/menu/${food.id}`)}
+      className={cn(
+        "bg-background text-sm min-w-[200px] shadow-md rounded-xl overflow-hidden flex flex-col gap-2 pb-2",
+        className
+      )}
+    >
+      <Photo photo={food.photo} size="MD" className="min-w-full" />
+      <div className="flex flex-col px-3">
+        <h1 className="font-semibold capitalize h-10 mt-1 line-clamp-2">
+          {food.name}
+        </h1>
+
+        <Star value={food.avgRating} className="" viewOnly />
         <div className="flex items-center justify-between">
-          <Link href={`/menu/${food.id}`} className={buttonVariants()}>
-            View item
-          </Link>
+          <h1 className="font-bold text-base text-primary">${food.price}</h1>
           <Button
-            onClick={handleAddedToCart}
-            variant="secondary"
+            onClick={(e) => {
+              e.stopPropagation();
+              mutate();
+            }}
+            disabled={isPending}
+            variant="ghost"
             size="icon"
-            className="boder-[1.5px]"
+            className="boder-[1.5px] hover:text-primary"
           >
             {isAddedToCart ? (
               <BsFillCartCheckFill className="h-4 w-4 text-primary" />
@@ -82,4 +85,18 @@ const FoodCard: React.FC<FoodCardProps> = ({ food, currentUser }) => {
   );
 };
 
-export default FoodCard;
+FoodCard.Skeleton = function FoodCardSkeleton() {
+  return (
+    <div className="min-w-[180px] w-full border rounded-xl overflow-hidden">
+      <Skeleton className="w-full aspect-[6/5]" />
+      <div className="w-full h-full p-3 space-y-3">
+        <Skeleton className="w-full h-8" />
+        <Skeleton className="w-1/2 h-6 mt-2" />
+        <div className="flex justify-between">
+          <Skeleton className="h-8 w-12" />
+          <Skeleton className="h-8 w-8" />
+        </div>
+      </div>
+    </div>
+  );
+};

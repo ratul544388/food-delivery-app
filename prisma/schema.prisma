@@ -13,6 +13,8 @@ model User {
   name     String
   email    String  @unique
   imageUrl String
+  phone    String?
+  address  String?
   isAdmin  Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -20,6 +22,7 @@ model User {
 
   cartItems CartItem[]
   orders    Order[]
+  reviews   Review[]
 }
 
 model CartItem {
@@ -32,46 +35,47 @@ model CartItem {
 
   food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
   foodId String @db.ObjectId
-
-  isPaid Boolean @default(false)
 }
 
 model Food {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  category String
-  photo    String
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  category    String
+  photo       String
+  description String
 
-  price  Float
-  review Float @default(0)
+  price     Float
+  reviews   Review[]
+  avgRating Float    @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sizes      Size[]
   cartItems  CartItem[]
   orderItems OrderItem[]
-  Purchases  Purchase[]
 }
 
-model Size {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+model Review {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  star    Float
+  message String
+  food    Food   @relation(fields: [foodId], references: [id])
+  foodId  String @db.ObjectId
 
-  size  FoodSize
-  price Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
-  foodId String @db.ObjectId
-
-  orderItems OrderItem[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.ObjectId
 }
 
 model Order {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  user   User        @relation(fields: [userId], references: [id])
-  userId String      @db.ObjectId
-  status OrderStatus
+  orderNo Int
+  user    User        @relation(fields: [userId], references: [id])
+  userId  String      @db.ObjectId
+  status  OrderStatus
 
   orderItems OrderItem[]
 
@@ -89,9 +93,6 @@ model OrderItem {
   foodId String @db.ObjectId
 
   quantity Int
-
-  size   Size?   @relation(fields: [sizeId], references: [id], onDelete: Cascade)
-  sizeId String? @db.ObjectId
 }
 
 model StripeCustomer {
@@ -103,31 +104,15 @@ model StripeCustomer {
   updatedAt DateTime @updatedAt
 }
 
-model Purchase {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-
-  userId String
-
-  foodId String @db.ObjectId
-  food   Food   @relation(fields: [foodId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+enum OrderStatus {
+  WAITING_FOR_PAYMENT
+  DELIVERY_PENDING
+  DELIVERED
+  CANCELED
 }
 
 enum FoodSize {
   SMALL
   MEDIUM
   LARGE
-}
-
-enum OrderStatus {
-  WAITING_FOR_PAYMENT
-  DELIVERY_PENDING
-  DELIVERED
-}
-
-model Test {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  count Int
 }

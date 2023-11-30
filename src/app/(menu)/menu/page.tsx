@@ -1,4 +1,3 @@
-import { getFoods } from "@/actions/get-foods";
 import FoodsGrid from "../_components/foods-grid";
 import { getCurrentUser } from "@/lib/current-user";
 
@@ -11,13 +10,14 @@ const Page = async ({
   if (category) {
     category = category.toUpperCase();
   }
-  const foods = await getFoods({ category });
   const currentUser = await getCurrentUser();
 
   return (
-    <div>
-      <FoodsGrid foods={foods} currentUser={currentUser} />
-    </div>
+    <FoodsGrid
+      currentUser={currentUser}
+      category={category}
+      queryKey={category}
+    />
   );
 };
 

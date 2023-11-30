@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const session = event.data.object as Stripe.Checkout.Session;
   const userId = session?.metadata?.userId;
   const orderId = session?.metadata?.orderId;
-
+  const isCart = !!session?.metadata?.isCart;
 
   if (event.type === "checkout.session.completed") {
     if (!userId || !orderId) {
@@ -42,16 +42,18 @@ export async function POST(req: Request) {
       },
     });
 
-    await db.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        cartItems: {
-          deleteMany: {},
+    if (isCart) {
+      await db.user.update({
+        where: {
+          id: userId,
         },
-      },
-    });
+        data: {
+          cartItems: {
+            deleteMany: {},
+          },
+        },
+      });
+    }
   } else {
     return new NextResponse(
       `Webhook Error: Unhandled event type ${event.type}`,

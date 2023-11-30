@@ -61,7 +61,7 @@ const Page = async ({
               >
                 Back to home
               </Link>
-              <Link href={`/orders`} className={buttonVariants()}>
+              <Link href={`/my-orders`} className={buttonVariants()}>
                 View orders
               </Link>
             </div>

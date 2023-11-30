@@ -44,10 +44,11 @@ const Counter: React.FC<CounterProps> = ({
         addOptimisticCount(amount);
         onChange(optimisticCount + amount);
         if (total && onTotalChange) {
-          onTotalChange(total + food.price);
+          onTotalChange(total + food.price * amount);
         }
-        await axios.post(`/api/food/${food?.id}/cart`, {
+        await axios.post(`/api/cart-items`, {
           count: amount,
+          foodId: food.id,
         });
       } catch (error) {
         toast.error("Something went wrong");
@@ -58,7 +59,7 @@ const Counter: React.FC<CounterProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-2 my-2">
+    <div className="flex items-center gap-2 my-2 select-none">
       <Icon
         onClick={() => handleChangeCount(-1)}
         icon={Minus}

@@ -8,7 +8,7 @@ import Stripe from "stripe";
 
 export async function POST(req: Request) {
   try {
-    const { orderItems } = await req.json();
+    const { orderItems, isCart } = await req.json();
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
     const deletingOrder = await db.order.findFirst({
       where: {
         status: "WAITING_FOR_PAYMENT",
+        userId: currentUser.id,
       },
     });
 
@@ -36,8 +37,11 @@ export async function POST(req: Request) {
       });
     }
 
+    const totalOrders = await db.order.count();
+
     const order = await db.order.create({
       data: {
+        orderNo: totalOrders + 1,
         userId: currentUser.id,
         status: "WAITING_FOR_PAYMENT",
         orderItems: {
@@ -99,6 +103,7 @@ export async function POST(req: Request) {
       metadata: {
         orderId: order.id,
         userId: currentUser.id,
+        isCart,
       },
     });
 

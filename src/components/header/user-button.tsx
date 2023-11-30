@@ -8,18 +8,29 @@ import {
 import { SignOutButton } from "@clerk/nextjs";
 import { useState } from "react";
 import Avatar from "../avatar";
-import { ListOrdered, LogOut, Shield, User2, UserPlus2 } from "lucide-react";
+import {
+  BookUser,
+  ListOrdered,
+  LogOut,
+  Shield,
+  User2,
+  UserPlus2,
+} from "lucide-react";
 import { User } from "@prisma/client";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useNavLinks } from "@/hooks/use-nav-links";
+import { useModal } from "@/hooks/use-modal-store";
+import Photo from "../photo";
 
-export function UserButton({ currentUser }: { currentUser: User | null }) {
+export function UserButton({ currentUser }: { currentUser: User }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   const adminRoutes = ["dashboard", "cuisines", "orders"];
-  const onAdminRoute = adminRoutes.some((route) => pathname.includes(route));
+  const { isAdminRoute } = useNavLinks({ currentUser });
+  const { onOpen, data } = useModal();
 
   const handleClick = (onClick: () => void) => {
     onClick();
@@ -28,8 +39,14 @@ export function UserButton({ currentUser }: { currentUser: User | null }) {
   return (
     <Popover open={open} onOpenChange={() => setOpen(!open)}>
       <PopoverTrigger asChild>
-        <Button className="h-fit w-fit p-2 rounded-full" variant="ghost">
-          <Avatar image={currentUser?.imageUrl} />
+        <Button
+          className="h-fit w-fit p-2 rounded-full"
+          variant="ghost"
+        >
+          <Photo
+            photo={currentUser?.imageUrl}
+            className="aspect-square rounded-full min-w-[32px]"
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -48,30 +65,56 @@ export function UserButton({ currentUser }: { currentUser: User | null }) {
               </div>
             </div>
             <div
-              onClick={() => handleClick(() => router.push("/orders"))}
+              onClick={() =>
+                handleClick(() => router.push(`/profile/${currentUser.id}`))
+              }
+              className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
+            >
+              <User2 className="h-4 w-4" />
+              Profile
+            </div>
+            <div
+              onClick={() => handleClick(() => router.push("/my-orders"))}
               className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
             >
               <ListOrdered className="h-4 w-4" />
               My orders
             </div>
-            {currentUser.isAdmin && onAdminRoute ? (
-              <div
-                onClick={() => handleClick(() => router.push("/"))}
-                className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
-              >
-                <Shield className="h-4 w-4" />
-                Exit From Admin
-              </div>
-            ) : (
-              <div
-                onClick={() =>
-                  handleClick(() => router.push("admin/dashboard"))
-                }
-                className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
-              >
-                <Shield className="h-4 w-4" />
-                Admin
-              </div>
+            <div
+              onClick={() =>
+                handleClick(() =>
+                  onOpen("ADDRESS_MODAL", { user: currentUser })
+                )
+              }
+              className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
+            >
+              <BookUser className="h-4 w-4" />
+              {currentUser.address
+                ? "Manage shipping info"
+                : "Add shipping info"}
+            </div>
+            {currentUser.isAdmin && (
+              <>
+                {isAdminRoute ? (
+                  <div
+                    onClick={() => handleClick(() => router.push("/"))}
+                    className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
+                  >
+                    <Shield className="h-4 w-4" />
+                    Exit From Admin
+                  </div>
+                ) : (
+                  <div
+                    onClick={() =>
+                      handleClick(() => router.push("/admin/dashboard"))
+                    }
+                    className="px-3 py-2.5 cursor-pointer flex items-center gap-2 hover:bg-accent"
+                  >
+                    <Shield className="h-4 w-4" />
+                    Admin
+                  </div>
+                )}
+              </>
             )}
             <SignOutButton>
               <div

@@ -1,6 +1,7 @@
 "use client";
 
 import { categories } from "@/constants";
+import { formatText } from "@/helper";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -24,17 +25,17 @@ const Categories = () => {
   };
 
   return (
-    <div className="flex gap-4 py-2 overflow-x-auto scrollbar-thin">
+    <div className="flex gap-4 overflow-x-auto scrollbar-thin">
       {categories.map((item) => (
         <div
           key={item}
           onClick={() => handleClick(item)}
           className={cn(
-            "border whitespace-nowrap rounded-md capitalize py-0.5 px-2 bg-primary/5 hover:bg-primary/10 transition-colors duration-300 cursor-pointer",
+            "border whitespace-nowrap rounded-md py-0.5 px-2 bg-primary/5 hover:bg-primary/10 transition-colors duration-300 cursor-pointer",
             isActive(item) && "bg-primary/90 text-white hover:bg-primary"
           )}
         >
-          {item.toLowerCase()}
+          {formatText(item)}
         </div>
       ))}
     </div>

@@ -19,6 +19,15 @@ export async function getCurrentUser() {
             food: true,
           },
         },
+        orders: {
+          include: {
+            orderItems: {
+              include: {
+                food: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -35,6 +44,15 @@ export async function getCurrentUser() {
         cartItems: {
           include: {
             food: true,
+          },
+        },
+        orders: {
+          include: {
+            orderItems: {
+              include: {
+                food: true,
+              },
+            },
           },
         },
       },

@@ -1,3 +1,4 @@
+import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { getCurrentUser } from "@/lib/current-user";
 import { redirect } from "next/navigation";
 
@@ -10,5 +11,5 @@ export default async function AdminLayout({
   if (!currentUser?.isAdmin) {
     redirect("/");
   }
-  return <div className="pb-10">{children}</div>;
+  return <MaxWidthWrapper className="pb-10">{children}</MaxWidthWrapper>;
 }

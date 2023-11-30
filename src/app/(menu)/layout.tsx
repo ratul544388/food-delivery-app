@@ -1,4 +1,5 @@
 import Categories from "@/components/categories";
+import MaxWidthWrapper from "@/components/max-width-wrapper";
 
 export default async function FoodWithCategoryLayout({
   children,
@@ -6,9 +7,9 @@ export default async function FoodWithCategoryLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex flex-col gap-2">
+    <MaxWidthWrapper className="flex flex-col gap-3 mb-10">
       <Categories />
-      <div className="">{children}</div>
-    </main>
+      {children}
+    </MaxWidthWrapper>
   );
 }

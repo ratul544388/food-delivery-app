@@ -1,13 +1,15 @@
+import BottomNavbar from "@/components/bottom-navbar";
 import Navbar from "@/components/header/navbar";
+import MaxWidthWrapper from "@/components/max-width-wrapper";
+import { getCurrentUser } from "@/lib/current-user";
+import { cn } from "@/lib/utils";
+import ModalProvider from "@/providers/modal-provider";
+import { QueryProvider } from "@/providers/query-provider";
+import ToastProvider from "@/providers/toast-provider";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Categories from "@/components/categories";
-import MaxWidthWrapper from "@/components/max-width-wrapper";
-import { ClerkProvider } from "@clerk/nextjs";
-import { getCurrentUser } from "@/lib/current-user";
-import ToastProvider from "@/providers/toast-provider";
-import { cn } from "@/lib/utils";
 import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,12 +28,19 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={cn(inter.className, "bg-accent/50")}>
-          <ToastProvider />
-          <Navbar currentUser={currentUser} />
-          <MaxWidthWrapper className="pt-[80px] h-full">
-            {children}
-          </MaxWidthWrapper>
+        <body
+          className={cn(
+            inter.className,
+            "absolute inset-0 -z-10 min-h-screen w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"
+          )}
+        >
+          <div className="fixed left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-rose-400 opacity-20 blur-[100px]" />
+          <QueryProvider>
+            <ModalProvider />
+            <ToastProvider />
+            <Navbar currentUser={currentUser} />
+            <main className="pt-4">{children}</main>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>

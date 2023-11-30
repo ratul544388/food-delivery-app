@@ -1,9 +1,10 @@
 "use client";
 
-import { Size } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
 import FoodCellAction from "./food-cell-action";
+import { FullOrderType } from "@/types";
+import { Food, OrderItem } from "@prisma/client";
 
 export type FoodColumn = {
   id: string;
@@ -11,7 +12,9 @@ export type FoodColumn = {
   name: string;
   category: string;
   price: number;
-  sizes: Size[];
+  orderItems: (OrderItem & {
+    food: Food;
+  })[];
 };
 
 export const foodColumns: ColumnDef<FoodColumn>[] = [
@@ -34,6 +37,9 @@ export const foodColumns: ColumnDef<FoodColumn>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      return <h1 className="capitalize">{row.getValue("name")}</h1>;
+    },
   },
   {
     accessorKey: "category",
@@ -49,6 +55,17 @@ export const foodColumns: ColumnDef<FoodColumn>[] = [
     header: "Price",
     cell: ({ row }) => {
       return <div className="capitalize">${row.original.price}</div>;
+    },
+  },
+  {
+    accessorKey: "orderItems",
+    header: "Sales",
+    cell: ({ row }) => {
+      const totalOrders = row.original.orderItems.length;
+      const itemCount = row.original.orderItems.reduce((total, item) => {
+        return total + item.quantity;
+      }, 0);
+      return <p className="capitalize">{totalOrders * itemCount}+</p>;
     },
   },
   {

@@ -1,5 +1,5 @@
 "use client";
-import Loader from "@/components/loader";
+import Loader from "@/components/loaders/loader";
 import { ClerkLoaded, ClerkLoading, SignUp } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
 import { dark } from "@clerk/themes";

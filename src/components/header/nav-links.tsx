@@ -1,12 +1,11 @@
 "use client";
-import { useNavLinks } from "@/app/hooks/use-nav-links";
+import { useNavLinks } from "@/hooks/use-nav-links";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 import Link from "next/link";
 
 const NavLinks = ({ currentUser }: { currentUser: User | null }) => {
-
-  const {navLinks, isActive} = useNavLinks({currentUser})
+  const { navLinks, isActive } = useNavLinks({ currentUser });
 
   return (
     <div className="sm:flex hidden items-center gap-6">

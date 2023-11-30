@@ -1,11 +1,11 @@
-import { getFoods } from "@/actions/get-foods";
+import { FoodSlider } from "@/components/food-slider";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Bike, Soup } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { getCurrentUser } from "@/lib/current-user";
+import { cn } from "@/lib/utils";
+import { ArrowRight, Bike } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import FoodsGrid from "../(menu)/_components/foods-grid";
-import { getCurrentUser } from "@/lib/current-user";
 export const dynamic = "force-dynamic";
 
 export default async function Home({
@@ -13,13 +13,12 @@ export default async function Home({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const currentUser = await getCurrentUser();
   let category = searchParams.category as string;
   if (category) {
     category = category.toUpperCase();
   }
-  const currentUser = await getCurrentUser();
 
-  const foods = await getFoods({ category });
   return (
     <main className="flex flex-col gap-10 mt-5">
       <div className="flex lg:flex-row justify-between flex-col items-center gap-8">
@@ -35,9 +34,14 @@ export default async function Home({
             Order any meal at may time and we will deliver it directly to you
             home.
           </p>
-          <Button className="mt-5 rounded-full">Make an order</Button>
           <Link
-            href="/"
+            href="/menu"
+            className={cn(buttonVariants(), "mt-5 rounded-full")}
+          >
+            Explore Our Offerings
+          </Link>
+          <Link
+            href="/menu"
             className="w-fit text-lg mt-10 cursor-pointer hover:underline font-semibold flex items-center gap-2"
           >
             Sepcials for lunch
@@ -46,7 +50,18 @@ export default async function Home({
         </div>
         <Image src="/images/hero.png" alt="hero" width={500} height={500} />
       </div>
-      <FoodsGrid foods={foods} currentUser={currentUser} />
+      <FoodSlider
+        label="Popular"
+        type="POPULAR"
+        currentUser={currentUser}
+        queryKey="popular"
+      />
+      <FoodSlider
+        queryKey="top_rated"
+        label="Top Rated"
+        type="TOP_RATED"
+        currentUser={currentUser}
+      />
     </main>
   );
 }

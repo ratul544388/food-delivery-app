@@ -21,7 +21,7 @@ const Icon: React.FC<IconProps> = ({
     <div
       onClick={onClick}
       className={cn(
-        "p-2 rounded-full bg-background hover:bg-accent cursor-pointer border-[1.5px]",
+        "p-2 w-fit rounded-full bg-background hover:bg-accent cursor-pointer border-[1.5px]",
         disabled && "opacity-80 pointer-events-none",
         className
       )}

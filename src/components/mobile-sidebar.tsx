@@ -1,67 +1,76 @@
 "use client";
 
-import { User } from "@prisma/client";
-
-import { useNavLinks } from "@/app/hooks/use-nav-links";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useNavLinks } from "@/hooks/use-nav-links";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
-import Logo from "./header/logo";
-import Icon from "./icon";
+import { User } from "@prisma/client";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Logo from "./header/logo";
+import { Button } from "./ui/button";
 
-interface MobileSidebarProps {
-  currentUser: User | null;
-}
-
-const MobileSidebar: React.FC<MobileSidebarProps> = ({ currentUser }) => {
-  const { isActive, navLinks } = useNavLinks({ currentUser });
+const MobileSidebar = ({ currentUser }: { currentUser: User | null }) => {
   const [open, setOpen] = useState(false);
-  const router = useRouter();
 
-  const handleClick = (href: string) => {
-    router.push(href);
-    setOpen(false);
-  };
+  const { isActive, navLinks } = useNavLinks({
+    currentUser,
+  });
 
   return (
-    <div className="block sm:hidden">
-      <Sheet open={open} onOpenChange={() => setOpen(!open)}>
-        <SheetTrigger asChild className="w-fit h-fit">
-          <Icon icon={Menu} />
-        </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col p-0 gap-3 py-2">
-          <Logo currentUser={currentUser} className="ml-10" />
-          <div className="flex flex-col mt-5">
-            {navLinks.map((link) => (
-              <div
-              key={link.label}
-                onClick={() => handleClick(link.href)}
-                className={cn(
-                  "pl-10 relative py-2.5 hover:bg-primary/5 cursor-pointer",
-                  isActive(link.href) && "bg-primary/5"
-                )}
-              >
-                <h1
+    <div className="sm:hidden">
+      <Menu
+        onClick={() => setOpen(true)}
+        className={cn("h-6 w-6 cursor-pointer")}
+      />
+      <div
+        onClick={() => setOpen(false)}
+        className={cn(
+          "fixed inset-0 backdrop-blur-sm pointer-events-none opacity-0 transition-opacity duration-500 z-[80]",
+          open && "pointer-events-auto opacity-100"
+        )}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            "bg-background flex flex-col absolute max-w-[420px] w-3/4 inset-y-0 border-r-[1.5px] transition-all duration-500 left-0 -translate-x-full",
+            open && "translate-x-0 "
+          )}
+        >
+          <Button
+            onClick={() => setOpen(false)}
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 absolute top-2 right-2"
+          >
+            <X className="h-4 w-4 text-primary" />
+          </Button>
+          <div className="flex flex-col py-2">
+            <Logo className="ml-10" />
+            <div className="mt-5 flex flex-col">
+              {navLinks.map((link) => (
+                <Link
+                  onClick={() => setOpen(false)}
+                  href={link.href}
+                  key={link.href}
                   className={cn(
-                    "font-semibold opacity-80",
-                    isActive(link.href) && "opacity-100"
+                    "pl-10 relative flex items-center gap-4 py-3 hover:bg-primary/5 font-medium",
+                    isActive(link.href) && "bg-primary/5 font-semibold"
                   )}
                 >
+                  <link.icon className="h-5 w-5" />
                   {link.label}
-                </h1>
-                <div
-                  className={cn(
-                    "h-full w-[5px] bg-primary absolute rounded-full right-0 top-0 hidden",
-                    isActive(link.href) && "block"
-                  )}
-                />
-              </div>
-            ))}
+                  <div
+                    className={cn(
+                      "absolute right-0 h-full w-[5px] bg-primary rounded-full hidden",
+                      isActive(link.href) && "block"
+                    )}
+                  />
+                </Link>
+              ))}
+            </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </div>
+      </div>
     </div>
   );
 };

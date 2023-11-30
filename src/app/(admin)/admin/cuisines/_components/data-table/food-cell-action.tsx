@@ -1,6 +1,6 @@
 "use client";
 import DropdownMenu from "@/components/dropdown-menu";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Eye, Trash, Utensils } from "lucide-react";
 import { FoodColumn } from "./food-columns";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,15 +31,20 @@ const FoodCellAction: React.FC<FoodCellActionProps> = ({ food }) => {
     <DropdownMenu
       items={[
         {
+          label: "View item",
+          icon: Utensils,
+          onClick: () => router.push(`/menu/${food.id}`),
+        },
+        {
           label: "Edit",
           icon: Edit,
-          onClick: () => router.push(`/cuisines/${food.id}/update`),
+          onClick: () => router.push(`/admin/cuisines/${food.id}/edit`),
         },
         {
           label: "Delete",
           icon: Trash,
           onClick: () => onDelete(),
-          isLoading: isLoading,
+          disabled: isLoading,
         },
       ]}
     />

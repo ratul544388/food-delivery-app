@@ -11,7 +11,7 @@ const Avatar: React.FC<AvatarProps> = ({ image, className }) => {
   return (
     <div
       className={cn(
-        "min-h-[36px] min-w-[36px] rounded-full relative overflow-hidden",
+        "aspect-[6/5] w-full rounded-full relative overflow-hidden",
         className
       )}
     >

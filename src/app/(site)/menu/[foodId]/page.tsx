@@ -1,10 +1,7 @@
-import Icon from "@/components/icon";
-import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
-import { Minus, Plus } from "lucide-react";
-import Image from "next/image";
 import { redirect } from "next/navigation";
-import FoodInfo from "../../_components/food-info";
+import FoodInfo from "./_components/food-info";
+import { getCurrentUser } from "@/lib/current-user";
 
 const Page = async ({ params }: { params: { foodId: string } }) => {
   const food = await db.food.findUnique({
@@ -12,15 +9,21 @@ const Page = async ({ params }: { params: { foodId: string } }) => {
       id: params.foodId,
     },
     include: {
-      sizes: true,
+      reviews: {
+        include: {
+          user: true,
+        },
+        take: 10,
+      },
     },
   });
+  const currentUser = await getCurrentUser();
 
   if (!food) {
     redirect("/");
   }
 
-  return <FoodInfo food={food} />;
+  return <FoodInfo food={food} currentUser={currentUser} />;
 };
 
 export default Page;
