@@ -4,12 +4,11 @@ import { NextResponse } from "next/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { foodId: string } }
 ) {
   try {
     const currentUser = await getCurrentUser();
 
-    const { message, star } = await req.json();
+    const { message, star, foodId } = await req.json();
 
     if (!currentUser) {
       return new NextResponse("Unauthenticated", { status: 401 });
@@ -17,7 +16,7 @@ export async function POST(
 
     const food = await db.food.findUnique({
       where: {
-        id: params.foodId,
+        id: foodId,
       },
       include: {
         reviews: true,
@@ -43,7 +42,7 @@ export async function POST(
     const review = await db.review.create({
       data: {
         userId: currentUser.id,
-        foodId: params.foodId,
+        foodId: foodId,
         star,
         message,
       },

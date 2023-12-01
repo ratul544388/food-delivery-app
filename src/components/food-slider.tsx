@@ -1,9 +1,8 @@
 "use client";
 
-import { FoodType } from "@/types";
+import { CurrentUser, FoodType } from "@/types";
 import { FoodCard } from "@/app/(menu)/_components/food-card";
 import { useInfinityFoods } from "@/hooks/use-infinity-foods";
-import { UserWithCart } from "@/types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "./ui/button";
@@ -15,7 +14,7 @@ interface FoodSliderProps {
   category?: string;
   queryKey: string;
   label: string;
-  currentUser: UserWithCart | null;
+  currentUser: CurrentUser | null;
   className?: string;
   foodId?: string;
 }

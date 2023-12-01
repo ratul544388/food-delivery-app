@@ -5,9 +5,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useModal } from "@/hooks/use-modal-store";
+import { useNavLinks } from "@/hooks/use-nav-links";
+import { cn } from "@/lib/utils";
 import { SignOutButton } from "@clerk/nextjs";
-import { useState } from "react";
-import Avatar from "../avatar";
+import { User } from "@prisma/client";
 import {
   BookUser,
   ListOrdered,
@@ -16,19 +18,16 @@ import {
   User2,
   UserPlus2,
 } from "lucide-react";
-import { User } from "@prisma/client";
 import { usePathname, useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { useNavLinks } from "@/hooks/use-nav-links";
-import { useModal } from "@/hooks/use-modal-store";
+import { useState } from "react";
+import Avatar from "../avatar";
 import Photo from "../photo";
 
-export function UserButton({ currentUser }: { currentUser: User }) {
+export function UserButton({ currentUser }: { currentUser: User | null }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  const adminRoutes = ["dashboard", "cuisines", "orders"];
   const { isAdminRoute } = useNavLinks({ currentUser });
   const { onOpen, data } = useModal();
 
@@ -39,12 +38,9 @@ export function UserButton({ currentUser }: { currentUser: User }) {
   return (
     <Popover open={open} onOpenChange={() => setOpen(!open)}>
       <PopoverTrigger asChild>
-        <Button
-          className="h-fit w-fit p-2 rounded-full"
-          variant="ghost"
-        >
+        <Button className="h-fit w-fit p-2 rounded-full" variant="ghost">
           <Photo
-            photo={currentUser?.imageUrl}
+            photo={currentUser?.imageUrl || "/images/placeholder.jpg"}
             className="aspect-square rounded-full min-w-[32px]"
           />
         </Button>

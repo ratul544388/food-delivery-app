@@ -32,7 +32,10 @@ const CartItem: React.FC<CartItemProps> = ({
       <div className="flex flex-col w-full">
         <div className="flex justify-between gap-3">
           <h1 className="font-semibold">{cartItem.food.name}</h1>
-          <Trash className="h-4 w-4 hover:text-primary"/>
+          <Trash
+            onClick={() => mutate()}
+            className="min-h-[20px] min-w-[20px] h-5 w-5 text-muted-foreground hover:text-primary"
+          />
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
           ${cartItem.food.price}

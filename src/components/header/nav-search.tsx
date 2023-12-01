@@ -57,7 +57,7 @@ export const NavSearch = () => {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && debouncedValue) {
       handleSearch();
     }
   }, [debouncedValue, isOpen, handleSearch]);
@@ -101,7 +101,10 @@ export const NavSearch = () => {
         />
         <div
           ref={containerRef}
-          className={cn("w-full flex flex-col bg-background rounded-xl py-2")}
+          className={cn(
+            "w-full flex flex-col bg-background rounded-xl",
+            value && "py-2"
+          )}
         >
           <div
             className={cn(

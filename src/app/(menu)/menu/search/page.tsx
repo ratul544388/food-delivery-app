@@ -12,7 +12,10 @@ const Page = async ({ searchParams }: { searchParams: { q: string } }) => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-3">
+      <h1 className="text-xl font-semibold text-muted-foreground">
+        Search results...
+      </h1>
       <FoodsGrid currentUser={currentUser} queryKey="search" q={q} />
     </div>
   );

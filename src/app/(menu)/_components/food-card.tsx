@@ -6,16 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMutation } from "@/hooks/use-mutation";
 import { cn } from "@/lib/utils";
-import { UserWithCart } from "@/types";
+import { CurrentUser } from "@/types";
 import { Food } from "@prisma/client";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BsCart, BsFillCartCheckFill } from "react-icons/bs";
-import { FaStar } from "react-icons/fa6";
 
 interface FoodCardProps {
   food: Food;
-  currentUser: UserWithCart | null;
+  currentUser: CurrentUser | null;
   queryKey: string;
   className?: string;
 }
@@ -46,6 +44,14 @@ export const FoodCard = ({
       : "Item was added to cart",
   });
 
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      return router.push("/sign-in");
+    }
+    mutate();
+  };
+
   return (
     <div
       onClick={() => router.push(`/menu/${food.id}`)}
@@ -64,10 +70,7 @@ export const FoodCard = ({
         <div className="flex items-center justify-between">
           <h1 className="font-bold text-base text-primary">${food.price}</h1>
           <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              mutate();
-            }}
+            onClick={handleAddToCart}
             disabled={isPending}
             variant="ghost"
             size="icon"

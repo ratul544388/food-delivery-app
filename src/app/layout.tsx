@@ -38,8 +38,10 @@ export default async function RootLayout({
           <QueryProvider>
             <ModalProvider />
             <ToastProvider />
-            <Navbar currentUser={currentUser} />
-            <main className="pt-4">{children}</main>
+            <main className="min-h-screen">
+              <Navbar currentUser={currentUser} />
+              <div className="pt-4">{children}</div>
+            </main>
           </QueryProvider>
         </body>
       </html>

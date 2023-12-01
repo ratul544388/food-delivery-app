@@ -54,13 +54,15 @@ export const orderColumns: ColumnDef<OrderColumn>[] = [
                     <Photo
                       key={index}
                       photo={item.food.photo}
-                      className="max-w-[25px]"
+                      className="max-w-[50px] min-w-[50px] rounded-md"
                     />
                   )
               )}
-              <p className="text-muted-foreground whitespace-nowrap">
-                {orderItems.length - 2} more
-              </p>
+              {orderItems.length > 2 && (
+                <p className="text-muted-foreground whitespace-nowrap">
+                  {orderItems.length - 2} more
+                </p>
+              )}
               <HoverCard>
                 <HoverCardTrigger asChild className="min-w-[16px]">
                   <View className="ml-2 w-4 h-4 hover:text-primary text-muted-foreground cursor-pointer" />

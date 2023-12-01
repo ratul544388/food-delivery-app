@@ -4,7 +4,7 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+    <div className="flex items-center justify-center pb-10">
       {children}
     </div>
   );

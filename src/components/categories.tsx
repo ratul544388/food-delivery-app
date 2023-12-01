@@ -31,7 +31,7 @@ const Categories = () => {
           key={item}
           onClick={() => handleClick(item)}
           className={cn(
-            "border whitespace-nowrap rounded-md py-0.5 px-2 bg-primary/5 hover:bg-primary/10 transition-colors duration-300 cursor-pointer",
+            "border select-none whitespace-nowrap rounded-md py-0.5 px-2 bg-primary/5 hover:bg-primary/10 transition-colors duration-300 cursor-pointer",
             isActive(item) && "bg-primary/90 text-white hover:bg-primary"
           )}
         >

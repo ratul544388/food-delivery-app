@@ -14,7 +14,7 @@ const Logo: React.FC<LogoProps> = ({ image, className }) => {
   return (
     <Link
       href={"/"}
-      className={cn("flex items-center gap-2 relative", className)}
+      className={cn("flex items-center gap-2 relative w-fit", className)}
     >
       <Image
         src={image || "/images/logo_1.png"}

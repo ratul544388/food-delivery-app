@@ -4,13 +4,12 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { foodId: string; reviewId: string } }
+  { params }: { params: { reviewId: string } }
 ) {
   try {
     const currentUser = await getCurrentUser();
 
-    const { message, star } = await req.json();
-
+    const { message, star, foodId } = await req.json();
 
     if (!currentUser) {
       return new NextResponse("Unauthenticated");
@@ -18,7 +17,7 @@ export async function PATCH(
 
     const food = await db.food.findUnique({
       where: {
-        id: params.foodId,
+        id: foodId,
       },
       include: {
         reviews: true,
@@ -61,6 +60,31 @@ export async function PATCH(
     });
 
     return NextResponse.json({ updatedFood, updatedReview });
+  } catch (error) {
+    console.log(error);
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { reviewId: string } }
+) {
+  try {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return new NextResponse("Unauthenticated");
+    }
+
+    const review = await db.review.delete({
+      where: {
+        id: params.reviewId,
+        userId: currentUser.id,
+      },
+    });
+
+    return NextResponse.json(review);
   } catch (error) {
     console.log(error);
     return new NextResponse("Internal server error", { status: 500 });

@@ -13,7 +13,6 @@ export default function Page() {
       </ClerkLoading>
       <ClerkLoaded>
         <SignUp
-          afterSignInUrl="/dashboard"
           appearance={{
             baseTheme: theme === "dark" ? dark : undefined,
           }}

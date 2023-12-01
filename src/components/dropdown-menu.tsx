@@ -40,7 +40,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         <TriggerIcon className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent
-        className={cn("w-[120px] p-0 text-sm font-semibold")}
+        className={cn("w-fit p-0 text-sm font-semibold")}
         align="end"
         style={{ width: `${contentWidth}px` }}
       >

@@ -21,14 +21,13 @@ export type FullOrderType = Order & {
   user: User;
 };
 
-export type UserWithCart = User & {
-  cartItems: FullCartTypes[];
-};
-
-export type UserWithOrders = User & {
+export type CurrentUser = User & {
   orders: (Order & {
     orderItems: (OrderItem & {
       food: Food;
     })[];
+  })[];
+  cartItems: (CartItem & {
+    food: Food;
   })[];
 };

@@ -3,23 +3,21 @@
 import Counter from "@/components/counter";
 import { FoodSlider } from "@/components/food-slider";
 import Photo from "@/components/photo";
+import Star from "@/components/star";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useModal } from "@/hooks/use-modal-store";
+import { CurrentUser, FoodWithReview } from "@/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import FoodDescription from "./food-description";
-import { Food, Order, OrderItem, User } from "@prisma/client";
 import FoodReviews from "./food-reviews";
-import { FoodWithReview, FullOrderType, UserWithOrders } from "@/types";
-import Star from "@/components/star";
-import { useModal } from "@/hooks/use-modal-store";
-import { redirectToSignIn } from "@clerk/nextjs";
 
 interface FoodInfoProps {
   food: FoodWithReview;
-  currentUser: UserWithOrders | null;
+  currentUser: CurrentUser | null;
 }
 
 const FoodInfo: React.FC<FoodInfoProps> = ({ food, currentUser }) => {
@@ -112,7 +110,7 @@ const FoodInfo: React.FC<FoodInfoProps> = ({ food, currentUser }) => {
         <FoodDescription foodName={food.name} description={food.description} />
       </div>
       <FoodSlider
-        currentUser={null}
+        currentUser={currentUser}
         queryKey="similar"
         label="Similar cuisines"
         category={food.category}

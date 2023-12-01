@@ -18,7 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { FoodWithReview, UserWithOrders } from "@/types";
+import { CurrentUser, FoodWithReview } from "@/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ const formSchema = z.object({
 
 interface FoodReviewsProps {
   food: FoodWithReview;
-  currentUser: UserWithOrders | null;
+  currentUser: CurrentUser | null;
 }
 
 const FoodReviews: React.FC<FoodReviewsProps> = ({ food, currentUser }) => {
@@ -66,24 +66,27 @@ const FoodReviews: React.FC<FoodReviewsProps> = ({ food, currentUser }) => {
   });
 
   useEffect(() => {
-    if (userReview) {
+    if (userReview && isEditing) {
       form.setValue("star", userReview.star);
       form.setValue("message", userReview.message);
     }
-  }, [userReview, form]);
+  }, [userReview, form, isEditing]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (userReview) {
-        await axios.patch(`/api/foods/${food.id}/reviews/${userReview.id}`, {
+        await axios.patch(`/api/reviews/${userReview.id}`, {
           ...values,
+          foodId: food.id,
         });
         setIsEditing(false);
       } else {
-        await axios.post(`/api/foods/${food.id}/reviews`, {
+        await axios.post(`/api/reviews`, {
           ...values,
+          foodId: food.id,
         });
       }
+      form.reset();
       router.refresh();
       toast.success(
         userReview ? "Your feedback was Updated" : "Your feedback was submitted"
@@ -97,95 +100,107 @@ const FoodReviews: React.FC<FoodReviewsProps> = ({ food, currentUser }) => {
     <div className="flex flex-col gap-3 text-sm">
       <h1 className="text-2xl font-bold text-primary">Reviews</h1>
       <Separator />
-      <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
-        {hasPurchased && (
-          <>
-            {!!userReview && !isEditing && (
-              <div className="flex flex-col gap-3">
-                <h1 className="font-semibold text-primary">Your review</h1>
-                <SingleReview review={userReview} />
-                <p
-                  onClick={() => setIsEditing(true)}
-                  className="mt-2 text-primary/80 hover:underline hover:text-primary/100 cursor-pointer"
-                >
-                  Edit your review
-                </p>
-              </div>
-            )}
-            {(!userReview || isEditing) && (
-              <div className="flex justify-between gap-8">
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full flex flex-col gap-3"
+      {!!food.reviews.length ? (
+        <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
+          {hasPurchased && (
+            <>
+              {!!userReview && !isEditing && (
+                <div className="flex flex-col gap-3">
+                  <h1 className="font-semibold text-primary">Your review</h1>
+                  <SingleReview review={userReview} userReview />
+                  <p
+                    onClick={() => setIsEditing(true)}
+                    className="mt-2 text-primary/80 hover:underline hover:text-primary/100 cursor-pointer"
                   >
-                    <FormField
-                      control={form.control}
-                      name="star"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Star
-                              size={32}
-                              value={field.value}
-                              onChange={field.onChange}
-                              className=""
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Give your review"
-                              {...field}
-                              className="w-full min-h-[120px]"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <div className="ml-auto mt-2 flex gap-3">
-                      <Button
-                        type="button"
-                        onClick={() => setIsEditing(false)}
-                        variant="ghost"
-                        className={cn("hidden", isEditing && "block")}
-                      >
-                        Cancel
-                      </Button>
-                      <LoadingButton
-                        label={cn(isEditing ? "Update" : "Submit")}
-                        loadingLabel={cn(
-                          isEditing ? "Updating..." : "Submiting..."
+                    Edit your review
+                  </p>
+                </div>
+              )}
+              {(!userReview || isEditing) && (
+                <div className="flex justify-between gap-8">
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="w-full flex flex-col gap-3"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="star"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Star
+                                size={32}
+                                value={field.value}
+                                onChange={field.onChange}
+                                className=""
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
                         )}
-                        isLoading={form.formState.isSubmitting}
                       />
-                    </div>
-                  </form>
-                </Form>
-              </div>
-            )}
-          </>
-        )}
-        <div className="flex flex-col gap-3 border-t pt-3 md:border-t-0 md:pt-0 md:border-l md:pl-5">
-          {userReview && (
-            <h1 className="text-primary font-semibold">Other&apos;s review</h1>
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Give your review"
+                                {...field}
+                                className="w-full min-h-[120px]"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="ml-auto mt-2 flex gap-3">
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            form.reset();
+                            setIsEditing(false);
+                          }}
+                          variant="ghost"
+                          className={cn("hidden", isEditing && "block")}
+                        >
+                          Cancel
+                        </Button>
+                        <LoadingButton
+                          label={cn(isEditing ? "Update" : "Submit")}
+                          loadingLabel={cn(
+                            isEditing ? "Updating..." : "Submiting..."
+                          )}
+                          isLoading={form.formState.isSubmitting}
+                        />
+                      </div>
+                    </form>
+                  </Form>
+                </div>
+              )}
+            </>
           )}
-          {food.reviews.map((review) => (
-            <div className="space-y-3 " key={review.id}>
-              <SingleReview review={review} currentUser={currentUser} />
-            </div>
-          ))}
+          <div className="flex flex-col gap-3 border-t pt-3 md:border-t-0 md:pt-0 md:border-l md:pl-5">
+            {userReview && (
+              <h1 className="text-primary font-semibold">
+                Other&apos;s review
+              </h1>
+            )}
+            {food.reviews.map((review) => (
+              <div className="space-y-3 " key={review.id}>
+                <SingleReview
+                  review={review}
+                  className={cn(currentUser?.id === review.user.id && "hidden")}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="font-semibold text-muted-foreground">No reviews</p>
+      )}
     </div>
   );
 };

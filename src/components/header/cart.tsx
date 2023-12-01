@@ -5,7 +5,7 @@ import { FullCartTypes } from "@/types";
 import { ShoppingCart, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import CartItem from "../cart-item";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import toast from "react-hot-toast";
 import LoadingButton from "../loading-button";
 import axios from "axios";
@@ -13,13 +13,19 @@ import { Separator } from "../ui/separator";
 import Photo from "../photo";
 import { cn } from "@/lib/utils";
 import Icon from "../icon";
+import { ScrollArea } from "../ui/scroll-area";
+import { User } from "@prisma/client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface CartProps {
   cartItems?: FullCartTypes[];
+  currentUser: User | null;
 }
 
-const Cart: React.FC<CartProps> = ({ cartItems }) => {
+const Cart: React.FC<CartProps> = ({ cartItems, currentUser }) => {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
 
   const totalPrice = cartItems?.reduce((total, item) => {
@@ -55,6 +61,12 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
     }
   };
 
+  useEffect(() => {
+    if (open) {
+      setOpen(false);
+    }
+  }, [pathname, open]);
+
   return (
     <>
       <Button
@@ -78,7 +90,7 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
         <div
           onClick={(e) => e.stopPropagation()}
           className={cn(
-            "bg-background flex flex-col absolute w-screen max-w-[500px] xs:w-[60vw] inset-y-0 right-0 border-l-[1.5px] transition-all duration-500 translate-x-full",
+            "bg-background flex flex-col absolute w-screen max-w-[500px] xs:w-[75vw] inset-y-0 right-0 border-l-[1.5px] transition-all duration-500 translate-x-full",
             open && "translate-x-0 "
           )}
         >
@@ -86,7 +98,7 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
             <Icon
               onClick={() => setOpen(false)}
               icon={X}
-              className="absolute left-5 xs:left-2 text-primary border-none"
+              className="absolute right-2 xs:left-2 text-primary border-none"
               iconSize={22}
             />
             <div className="flex items-center gap-2 text-muted-foreground justify-center">
@@ -95,18 +107,40 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
             </div>
           </div>
           <div className="flex flex-col grow w-full">
-            {cartItems?.length === 0 && (
-              <div className="flex flex-col gap-3 mt-auto w-full items-center mb-20">
+            {!!!cartItems?.length && (
+              <div className="flex flex-col gap-3 my-auto w-full items-center">
                 <Photo
                   photo="/images/empty-cart.png"
                   className="max-w-[60%] mt-auto aspect-square"
                 />
-                <p className="text-muted-foreground">
-                  Your food cart is hungry. Fill it up!
-                </p>
+
+                {currentUser ? (
+                  <p className="text-muted-foreground">
+                    Your food cart is hungry. Fill it up!
+                  </p>
+                ) : (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex gap-3">
+                      <Link href="/sign-in" className={buttonVariants()}>
+                        Sign in
+                      </Link>
+                      <Link
+                        href="/sign-up"
+                        className={buttonVariants({
+                          variant: "outline",
+                        })}
+                      >
+                        Sign up
+                      </Link>
+                    </div>
+                    <p className="text-muted-foreground">
+                      Sign in or create a new account
+                    </p>
+                  </div>
+                )}
               </div>
             )}
-            <div className="flex flex-col overflow-y-auto max-h-[75vh]">
+            <ScrollArea className="flex flex-col  max-h-[75vh]">
               {cartItems?.map((item) => (
                 <CartItem
                   onTotalChange={(value) => {
@@ -117,7 +151,7 @@ const Cart: React.FC<CartProps> = ({ cartItems }) => {
                   total={total}
                 />
               ))}
-            </div>
+            </ScrollArea>
           </div>
           {!!cartItems?.length && (
             <div className="sticky flex items-center justify-between gap-1 bottom-0 inset-x-0 p-4">

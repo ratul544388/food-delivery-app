@@ -1,4 +1,4 @@
-import { Order, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { create } from "zustand";
 
 export type ModalType =

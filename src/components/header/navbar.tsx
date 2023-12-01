@@ -23,27 +23,25 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   const { isAdminRoute } = useNavLinks({ currentUser });
   return (
-    <MaxWidthWrapper className="sticky flex items-center justify-between inset-0 top-0 border-b shadow-md h-[70px] bg-background z-50">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3">
-            <MobileSidebar currentUser={currentUser} />
-            <Logo className="flex" />
+    <div className="sticky inset-x-0 top-0 border-b shadow-md z-50 w-full">
+      <MaxWidthWrapper className="flex items-center justify-between h-[70px] bg-background">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-3">
+              <MobileSidebar currentUser={currentUser} />
+              <Logo className="flex" />
+            </div>
+            <NavLinks currentUser={currentUser} />
+            {isAdminRoute && <Badge className="sm:hidden">Admin</Badge>}
           </div>
-          <NavLinks currentUser={currentUser} />
-          {isAdminRoute && <Badge className="sm:hidden">Admin</Badge>}
         </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <NavSearch />
-        {currentUser && (
-          <>
-            <Cart cartItems={currentUser?.cartItems} />
-            <UserButton currentUser={currentUser} />
-          </>
-        )}
-      </div>
-    </MaxWidthWrapper>
+        <div className="flex items-center gap-3">
+          <NavSearch />
+          <Cart cartItems={currentUser?.cartItems} currentUser={currentUser} />
+          <UserButton currentUser={currentUser} />
+        </div>
+      </MaxWidthWrapper>
+    </div>
   );
 };
 

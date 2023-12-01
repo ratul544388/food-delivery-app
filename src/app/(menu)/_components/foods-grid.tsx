@@ -2,15 +2,15 @@
 
 import Loader from "@/components/loaders/loader";
 import { useInfinityFoods } from "@/hooks/use-infinity-foods";
-import { UserWithCart } from "@/types";
 import { Food } from "@prisma/client";
 import { Fragment, useEffect } from "react";
 import { PulseLoader } from "react-spinners";
 import { FoodCard } from "./food-card";
 import { cn } from "@/lib/utils";
+import { CurrentUser } from "@/types";
 
 interface FoodsGridProps {
-  currentUser: UserWithCart | null;
+  currentUser: CurrentUser | null;
   queryKey: string;
   category?: string;
   q?: string;
@@ -34,6 +34,14 @@ const FoodsGrid: React.FC<FoodsGridProps> = ({
 
   if (status === "error") {
     return "Error while fetching foods";
+  }
+
+  if (data?.pages[0].foods.length === 0) {
+    return (
+      <p className="text-muted-foreground mt-3 mx-auto">
+        No food item found
+      </p>
+    );
   }
 
   return (
