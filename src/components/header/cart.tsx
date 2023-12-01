@@ -61,12 +61,6 @@ const Cart: React.FC<CartProps> = ({ cartItems, currentUser }) => {
     }
   };
 
-  useEffect(() => {
-    if (open) {
-      setOpen(false);
-    }
-  }, [pathname, open]);
-
   return (
     <>
       <Button

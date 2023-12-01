@@ -1,10 +1,12 @@
 import { useMutation } from "@/hooks/use-mutation";
 import { FullCartTypes } from "@/types";
-import { Equal, Trash, X } from "lucide-react";
+import { Equal, Router, Trash, X } from "lucide-react";
 import { useState } from "react";
 import Counter from "./counter";
 import Icon from "./icon";
 import Photo from "./photo";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface CartItemProps {
   cartItem: FullCartTypes;
@@ -18,6 +20,7 @@ const CartItem: React.FC<CartItemProps> = ({
   onTotalChange,
 }) => {
   const [count, setCount] = useState(cartItem.count);
+  const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     api: `/api/cart-items/${cartItem.id}`,
@@ -31,10 +34,18 @@ const CartItem: React.FC<CartItemProps> = ({
       <Photo photo={cartItem.food.photo} size="SM" />
       <div className="flex flex-col w-full">
         <div className="flex justify-between gap-3">
-          <h1 className="font-semibold">{cartItem.food.name}</h1>
+          <h1
+            onClick={() => router.push(`/menu/${cartItem.foodId}`)}
+            className="font-semibold hover:underline cursor-pointer"
+          >
+            {cartItem.food.name}
+          </h1>
           <Trash
             onClick={() => mutate()}
-            className="min-h-[20px] min-w-[20px] h-5 w-5 text-muted-foreground hover:text-primary"
+            className={cn(
+              "min-h-[20px] min-w-[20px] h-5 w-5 text-muted-foreground hover:text-primary",
+              isPending && "pointer-events-none opacity-60"
+            )}
           />
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
