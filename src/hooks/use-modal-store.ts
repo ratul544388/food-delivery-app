@@ -5,11 +5,15 @@ export type ModalType =
   | "ADDRESS_MODAL"
   | "LOGOUT_MODAL"
   | "CONFIRM_ORDER_MODAL"
-  | "CANCEL_ORDER_MODAL";
+  | "CANCEL_ORDER_MODAL"
+  | "DELETE_FOOD_MODAL"
+  | "DELETE_REVIEW_MODAL";
 
 interface ModalData {
   user?: User;
   orderId?: string;
+  foodId?: string;
+  reviewId?: string;
 }
 
 interface ModalStore {

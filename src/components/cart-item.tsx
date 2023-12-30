@@ -1,12 +1,13 @@
-import { useMutation } from "@/hooks/use-mutation";
-import { FullCartTypes } from "@/types";
-import { Equal, Router, Trash, X } from "lucide-react";
-import { useState } from "react";
-import Counter from "./counter";
-import Icon from "./icon";
-import Photo from "./photo";
-import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { FullCartTypes } from "@/types";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Equal, Trash, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import Counter from "./counter";
+import Photo from "./photo";
 
 interface CartItemProps {
   cartItem: FullCartTypes;
@@ -23,10 +24,16 @@ const CartItem: React.FC<CartItemProps> = ({
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
-    api: `/api/cart-items/${cartItem.id}`,
-    method: "delete",
-    refresh: true,
-    success: "Item removed",
+    mutationFn: async () => {
+      await axios.patch(`/api/admin/orders/cancel`);
+    },
+    onSuccess: () => {
+      toast.success("Order marked as delivered");
+      router.refresh();
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
   });
 
   return (

@@ -1,6 +1,5 @@
-import BottomNavbar from "@/components/bottom-navbar";
-import Navbar from "@/components/header/navbar";
-import MaxWidthWrapper from "@/components/max-width-wrapper";
+import Footer from "@/components/footer";
+import Header from "@/components/header/header";
 import { getCurrentUser } from "@/lib/current-user";
 import { cn } from "@/lib/utils";
 import ModalProvider from "@/providers/modal-provider";
@@ -10,7 +9,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,18 +29,19 @@ export default async function RootLayout({
         <body
           className={cn(
             inter.className,
-            "absolute inset-0 -z-10 min-h-screen w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"
+            "absolute inset-0 overflow-y-hidden -z-10 w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"
           )}
         >
           <div className="fixed left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-rose-400 opacity-20 blur-[100px]" />
-          <QueryProvider>
-            <ModalProvider />
-            <ToastProvider />
-            <main className="min-h-screen">
-              <Navbar currentUser={currentUser} />
-              <div className="pt-4">{children}</div>
-            </main>
-          </QueryProvider>
+          <div className=" overflow-y-auto h-full flex flex-col gap-5 min-h-screen">
+            <QueryProvider>
+              <ModalProvider />
+              <ToastProvider />
+              <Header currentUser={currentUser} />
+              <main className="flex-grow flex-1">{children}</main>
+              <Footer />
+            </QueryProvider>
+          </div>
         </body>
       </html>
     </ClerkProvider>

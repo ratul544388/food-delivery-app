@@ -10,7 +10,9 @@ const MaxWidthWrapper: React.FC<MaxWidthWrapperProps> = ({
   className,
 }) => {
   return (
-    <div className={cn("max-w-screen-2xl w-full mx-auto px-3 sm:px-6", className)}>
+    <div
+      className={cn("max-w-screen-2xl w-full mx-auto px-3 sm:px-6", className)}
+    >
       {children}
     </div>
   );

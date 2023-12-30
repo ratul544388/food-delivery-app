@@ -39,6 +39,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingButton from "../loading-button";
+import { Button } from "../ui/button";
 
 const AddressModal = () => {
   const { isOpen, type, data, onClose } = useModal();
@@ -98,54 +99,54 @@ const AddressModal = () => {
             Please provide your shipping address in full details including
             District, street, zip code etc.
           </DialogDescription>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-8"
-            >
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        autoFocus={false}
-                        placeholder="Enter your full address"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter your phone number"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <LoadingButton
-                label={hasAddress ? "Update" : "Add"}
-                loadingLabel={hasAddress ? "Updating..." : "Adding..."}
-                isLoading={isLoading}
-                className="ml-auto"
-              />
-            </form>
-          </Form>
         </DialogHeader>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-8"
+          >
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      autoFocus={false}
+                      placeholder="Enter your full address"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter your phone number"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <LoadingButton
+              label={hasAddress ? "Update" : "Add"}
+              loadingLabel={hasAddress ? "Updating..." : "Adding..."}
+              isLoading={isLoading}
+              className="ml-auto"
+            />
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

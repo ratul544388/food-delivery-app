@@ -1,13 +1,5 @@
 "use client";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-// import { formatText } from "@/helper";
-import { cn } from "@/lib/utils";
-import { Check, CheckIcon, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import {
   Command,
   CommandEmpty,
@@ -15,7 +7,14 @@ import {
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";
-import { Badge } from "@/components/ui/badge";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { CheckIcon, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 interface SelectProps {
   items: string[];

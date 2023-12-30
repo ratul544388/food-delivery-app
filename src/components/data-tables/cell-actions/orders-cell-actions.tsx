@@ -1,38 +1,48 @@
 "use client";
 
-import DropdownMenu from "@/components/dropdown-menu";
-import { OrderColumn } from "../columns/orders-columns";
-import { useRouter } from "next/navigation";
-import { Bike, User2, XCircle } from "lucide-react";
+import { ActionDropdownMenu } from "@/components/action-dropdown-menu";
 import { useModal } from "@/hooks/use-modal-store";
-import { useMutation } from "@/hooks/use-mutation";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { Bike, User2, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { OrderColumn } from "../columns/orders-columns";
 
 interface OrdersCellActionsProps {
   order: OrderColumn;
 }
 
 const OrdersCellActions: React.FC<OrdersCellActionsProps> = ({ order }) => {
-  const router = useRouter();
   const { onOpen } = useModal();
+  const router = useRouter();
 
-  const { mutate } = useMutation({
-    api: `/api/admin/orders/${order.id}`,
-    data: {
-      status: "DELIVERED",
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      await axios.patch(`/api/admin/orders/${order.id}`, {
+        status: "DELIVERED",
+      });
     },
-    method: "patch",
-    refresh: true,
-    success: "Order marked as delivered",
+    onSuccess: () => {
+      toast.success("Order marked as delivered");
+      router.refresh();
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
   });
+
   return (
-    <DropdownMenu
-      contentWidth={200}
+    <ActionDropdownMenu
       items={[
         {
           label: "Make it delivered",
           onClick: () => mutate(),
           icon: Bike,
-          disabled: order.status === "CANCELED" || order.status === "DELIVERED",
+          disabled:
+            isPending ||
+            order.status === "CANCELED" ||
+            order.status === "DELIVERED",
         },
         {
           label: "Cancel order",

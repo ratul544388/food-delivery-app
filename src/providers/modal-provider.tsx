@@ -1,6 +1,8 @@
 "use client";
 import AddressModal from "@/components/modals/address-modal";
-import CancelOrderModal from "@/components/modals/cancel-order-modal.";
+import { CancelOrderModal } from "@/components/modals/cancel-order-modal.";
+import { DeleteFoodModal } from "@/components/modals/delete-food-modal";
+import { DeleteReviewModal } from "@/components/modals/delete-review-modal";
 import { useEffect, useState } from "react";
 
 const ModalProvider = () => {
@@ -18,6 +20,8 @@ const ModalProvider = () => {
     <>
       <AddressModal />
       <CancelOrderModal />
+      <DeleteFoodModal />
+      <DeleteReviewModal />
     </>
   );
 };

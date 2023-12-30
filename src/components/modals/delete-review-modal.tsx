@@ -16,18 +16,16 @@ import toast from "react-hot-toast";
 import LoadingButton from "../loading-button";
 import { Button } from "../ui/button";
 
-export const CancelOrderModal = () => {
+export const DeleteReviewModal = () => {
   const { isOpen, type, data, onClose } = useModal();
   const router = useRouter();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      await axios.patch(`/api/admin/orders/${data.orderId}`, {
-        status: "CANCELED",
-      });
+      await axios.delete(`/api/reviews/${data.reviewId}`);
     },
     onSuccess: () => {
-      toast.success("Order marked as delivered");
+      toast.success("Review deleted");
       router.refresh();
       onClose();
     },
@@ -38,15 +36,13 @@ export const CancelOrderModal = () => {
 
   return (
     <Dialog
-      open={isOpen && type === "CANCEL_ORDER_MODAL"}
+      open={isOpen && type === "DELETE_REVIEW_MODAL"}
       onOpenChange={() => onClose()}
     >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Are you absolute sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will cancel the order.
-          </DialogDescription>
+          <DialogDescription>Delete your review.</DialogDescription>
         </DialogHeader>
         <div className="flex justify-between">
           <Button disabled={isPending} onClick={onClose} variant="ghost">

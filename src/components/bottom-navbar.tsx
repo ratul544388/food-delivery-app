@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
 import { ListOrdered } from "lucide-react";
 import Link from "next/link";
-import MobileSidebar from "./mobile-sidebar";
 
 interface BottomNavbarProps {
   currentUser: User | null;

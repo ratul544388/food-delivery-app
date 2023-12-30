@@ -107,7 +107,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(session.url);
+    return NextResponse.json({ url: session.url });
   } catch (error) {
     console.log(error);
     return new NextResponse("Internal server error", { status: 500 });

@@ -10,7 +10,7 @@ interface LogoProps {
   className?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ image, className }) => {
+export const Logo = ({ image, className }: LogoProps) => {
   return (
     <Link
       href={"/"}
@@ -30,5 +30,3 @@ const Logo: React.FC<LogoProps> = ({ image, className }) => {
     </Link>
   );
 };
-
-export default Logo;
